@@ -39,7 +39,7 @@ class Normalizer:
 
     # ------------ LOADING ------------ #
 
-    def load(self, folder_path):
+    def load(self,folder_path):
         """
         Load all .txt files from a given directory.
 
@@ -49,10 +49,23 @@ class Normalizer:
         Returns:
             str: Concatenated text content of all .txt files in the folder.
         """
+        
+        text_all = []
+
+        
+        for filename in os.listdir(folder_path):
+            if filename.endswith(".txt"):
+                file_path = os.path.join(folder_path, filename)
+
+                with open(file_path, "r", encoding="utf-8") as f:
+                    raw = f.read()
+
+                # Clean EACH file before concatenation
+                cleaned =self.strip_gutenberg(raw)
+                text_all.append(cleaned)
 
 
-        pass
-
+        return "\n".join(text_all)
  
 
     # ------------ CLEANING ------------ #
@@ -67,11 +80,22 @@ class Normalizer:
         Returns:
             str: Text with header & footer removed.
         """
+        
+        start_pattern = r"\*\*\* START OF THE PROJECT GUTENBERG EBOOK.*?\*\*\*"
+        end_pattern = r"\*\*\* END OF THE PROJECT GUTENBERG EBOOK.*"
+        if start_pattern not in text or end_pattern not in text: 
+            return text
+        # Remove before START
+        text = re.sub(f"(?s).*?{start_pattern}", "", text)
+
+        # Remove from END onward
+        text = re.sub(f"{end_pattern}(?s).*", "", text)
+
+        return text
 
 
-        pass
 
-    def lowercase(self, text):
+    def lowercase(self,text):
         """
         Convert all text to lowercase.
 
@@ -81,10 +105,10 @@ class Normalizer:
         Returns:
             str: Lowercased text.
         """
-  
-        pass
+        return text.lower()
+        
 
-    def remove_punctuation(self, text):
+    def remove_punctuation(self,text):
         """
         Remove punctuation characters.
 
@@ -94,9 +118,9 @@ class Normalizer:
         Returns:
             str: Text without punctuation.
         """
-        pass
+        return text.translate(str.maketrans("", "", string.punctuation + "“”‘’"))
 
-    def remove_numbers(self, text):
+    def remove_numbers(self,text):
         """
         Remove all digits.
 
@@ -106,9 +130,9 @@ class Normalizer:
         Returns:
             str: Text without numbers.
         """
-        pass
+        return re.sub(r"\d+", "", text)
 
-    def remove_whitespace(self, text):
+    def remove_whitespace(self,text):
         """
         Normalize whitespace: remove extra spaces and blank lines.
 
@@ -118,11 +142,14 @@ class Normalizer:
         Returns:
             str: Cleaned text with single spacing.
         """
-        pass
+        
+        text = re.sub(r"\s+", " ", text)
+        return text.strip()
+
 
     # ------------ NORMALIZATION PIPELINE ------------ #
 
-    def normalize(self, text):
+    def normalize(self,text):
         """
         Apply all normalization steps in the correct order:
 
@@ -135,11 +162,17 @@ class Normalizer:
             str: Fully normalized text.
         """
        
-        pass
+        text = self.lowercase(text)
+        text = self.remove_punctuation(text)
+        text = self.remove_numbers(text)
+        text = self.remove_whitespace(text)
+        return text
+
+        
 
     # ------------ TOKENIZATION ------------ #
 
-    def sentence_tokenize(self, text):
+    def sentence_tokenize(self,text):
         """
         Split text into sentences.
 
@@ -149,9 +182,12 @@ class Normalizer:
         Returns:
             list[str]: List of sentence strings.
         """
-        pass
+       
+        sentences = re.split(r"[.!?]+\s", text)
+        return [s.strip() for s in sentences if s.strip()]
 
-    def word_tokenize(self, sentence):
+
+    def word_tokenize(self,sentence):
         """
         Tokenize a sentence into individual tokens.
 
@@ -161,11 +197,11 @@ class Normalizer:
         Returns:
             list[str]: List of tokens (words).
         """
-        pass
+        return sentence.split()
 
     # ------------ SAVE ------------ #
 
-    def save(self, sentences, filepath):
+    def save(self,sentences, filepath):
         """
         Save tokenized sentences to a file, one sentence per line.
 
@@ -178,4 +214,7 @@ class Normalizer:
         Returns:
             None
         """
-        pass
+        
+        with open(filepath, "w", encoding="utf-8") as f:
+            for tokens in sentences:
+                f.write(" ".join(tokens) + "\n")
