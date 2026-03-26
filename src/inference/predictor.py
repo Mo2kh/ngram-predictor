@@ -15,12 +15,13 @@ import os
 from dotenv import load_dotenv
 
 
+
 class Predictor:
     """
     Predictor orchestrates the inference pipeline:
 
     1. Normalize raw input text using the provided Normalizer.
-    2. Extract context of length NGRAM_ORDER − 1.
+    2. Extract context of length NGRAM_ORDER - 1.
     3. Map OOV context words to <UNK>.
     4. Call NGramModel.lookup() to perform backoff probability lookup.
     5. Sort candidate words by probability and return the top-k.
@@ -87,4 +88,3 @@ class Predictor:
             list[str]: Top-k predicted next words sorted by probability.
         """
  
-``
