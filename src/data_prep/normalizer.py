@@ -51,6 +51,7 @@ class Normalizer:
         """
 
 
+        pass
 
  
 
@@ -68,7 +69,7 @@ class Normalizer:
         """
 
 
-
+        pass
 
     def lowercase(self, text):
         """
@@ -81,6 +82,7 @@ class Normalizer:
             str: Lowercased text.
         """
   
+        pass
 
     def remove_punctuation(self, text):
         """
@@ -92,7 +94,7 @@ class Normalizer:
         Returns:
             str: Text without punctuation.
         """
-        
+        pass
 
     def remove_numbers(self, text):
         """
@@ -104,7 +106,7 @@ class Normalizer:
         Returns:
             str: Text without numbers.
         """
-        
+        pass
 
     def remove_whitespace(self, text):
         """
@@ -116,7 +118,7 @@ class Normalizer:
         Returns:
             str: Cleaned text with single spacing.
         """
-        
+        pass
 
     # ------------ NORMALIZATION PIPELINE ------------ #
 
@@ -133,7 +135,7 @@ class Normalizer:
             str: Fully normalized text.
         """
        
-
+        pass
 
     # ------------ TOKENIZATION ------------ #
 
@@ -147,7 +149,7 @@ class Normalizer:
         Returns:
             list[str]: List of sentence strings.
         """
-   
+        pass
 
     def word_tokenize(self, sentence):
         """
@@ -159,7 +161,7 @@ class Normalizer:
         Returns:
             list[str]: List of tokens (words).
         """
-      
+        pass
 
     # ------------ SAVE ------------ #
 
@@ -176,4 +178,4 @@ class Normalizer:
         Returns:
             None
         """
-        
+        pass

@@ -40,7 +40,7 @@ class Predictor:
         Returns:
             None
         """
-
+        pass
 
     # ----------------------------------------------------------
     # Step 01 — Normalize input & extract context
@@ -56,7 +56,7 @@ class Predictor:
         Returns:
             list[str]: The extracted context tokens.
         """
-
+        pass
 
     # ----------------------------------------------------------
     # Step 02 — Map OOV words to <UNK>
@@ -71,7 +71,7 @@ class Predictor:
         Returns:
             list[str]: Context tokens with OOV mapped to <UNK>.
         """
-   
+        pass
 
     # ----------------------------------------------------------
     # Step 03 & 04 — Predict next words
@@ -87,4 +87,4 @@ class Predictor:
         Returns:
             list[str]: Top-k predicted next words sorted by probability.
         """
- 
+        pass

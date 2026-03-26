@@ -47,7 +47,7 @@ class NGramModel:
         Returns:
             None
         """
-
+        pass
 
     # ---------------------------------------------------------------------
     # 02 & 03 — Build Counts + Compute MLE Probabilities
@@ -62,7 +62,7 @@ class NGramModel:
         Returns:
             None
         """
-
+        pass
 
     # ---------------------------------------------------------------------
     # 04 — Lookup (Stupid Backoff)
@@ -79,7 +79,7 @@ class NGramModel:
             dict: {word: probability} for the highest-order match found,
                   or {} if nothing matches.
         """
-       
+        pass
     # ---------------------------------------------------------------------
     # 05 — Save Model & Vocab
     # ---------------------------------------------------------------------
@@ -93,7 +93,7 @@ class NGramModel:
         Returns:
             None
         """
-
+        pass
 
     def save_vocab(self, vocab_path):
         """
@@ -105,7 +105,7 @@ class NGramModel:
         Returns:
             None
         """
- 
+        pass
 
     # ---------------------------------------------------------------------
     # Load Model
@@ -121,3 +121,4 @@ class NGramModel:
         Returns:
             None
         """
+        pass
