@@ -295,8 +295,8 @@ def main():
     print("\n[4] Saving tokenized corpus...")
     normalizer.save(tokenized_sentences, TRAIN_TOKEN_FILE)
 
-    print(f"✅ train_tokens.txt saved to {TRAIN_TOKEN_FILE}")
-    print("\n✅ Normalizer test completed successfully.")
+    print(f" train_tokens.txt saved to {TRAIN_TOKEN_FILE}")
+    print(" Normalizer test completed successfully.")
 
 
 # ---------------------------------------------------------
