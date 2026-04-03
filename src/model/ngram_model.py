@@ -32,6 +32,30 @@ class NGramModel:
     - Save/load model files
     """
 
+    # ------------------------------------------------------------
+    # Initialization
+    # ------------------------------------------------------------
+    def __init__(self, ngram_order, unk_threshold):
+        """
+        Initialize an empty NGramModel instance.
+
+        Parameters:
+            ngram_order (int): Maximum n-gram order (e.g. 4).
+            unk_threshold (int): Minimum frequency to keep a word in vocabulary.
+        """
+        self.ngram_order = ngram_order
+        self.unk_threshold = unk_threshold
+
+        self.vocab = []
+        self.vocab_set = set()
+
+        # counts[k][context][word] -> count for (k+1)-gram
+        self.counts = [defaultdict(Counter) for _ in range(ngram_order)]
+
+        # probs[k][context][word] -> probability for (k+1)-gram
+        self.probs = [defaultdict(dict) for _ in range(ngram_order)]
+
+
 
 
     # ---------------------------------------------------------------------
@@ -220,3 +244,81 @@ class NGramModel:
             for context_str, targets in model_data.get(key, {}).items():
                 context = tuple(context_str.split()) if context_str else ()
                 self.probs[order - 1][context] = targets
+
+
+def main():
+    """
+    Standalone test runner for NGramModel.
+
+    This function allows you to:
+    - Build vocab
+    - Build n-gram counts and probabilities
+    - Inspect the model structure
+    - Test backoff lookup
+
+    Run:
+        python src/model/ngram_model.py
+    """
+
+    # ---- CONFIG FOR TESTING ----
+    from dotenv import load_dotenv
+    load_dotenv(dotenv_path=os.path.join(os.getcwd(), "config/.env"))
+
+    print("=== NGramModel Standalone Test ===")
+
+    # ---- Initialize model ----
+    model = NGramModel(
+        ngram_order=int(os.getenv("NGRAM_ORDER")),
+        unk_threshold=int(os.getenv("UNK_THRESHOLD"))
+    )
+
+    # ---- Build vocab ----
+    print("\n[1] Building vocabulary...")
+    model.build_vocab(os.getenv("TRAIN_TOKENS"))
+    print(f"Vocab size: {len(model.vocab)}")
+    print("Sample vocab:", model.vocab[:15])
+
+    # ---- Build counts & probabilities ----
+    print("\n[2] Building n-gram counts and probabilities...")
+    model.build_counts_and_probabilities(os.getenv("TRAIN_TOKENS"))
+
+    # ---- Inspect n-gram tables ----
+    for i in range(int(os.getenv("NGRAM_ORDER"))):
+        print(f"{i+1}-gram contexts:", len(model.probs[i]))
+
+    # ---- Test lookups ----
+    print("\n[3] Testing backoff lookup...")
+
+    test_contexts = [
+        ["holmes", "said", "to"],
+        ["the", "game", "is"],
+        ["completely", "madeup", "context"],  # OOV test
+        []
+    ]
+
+    for ctx in test_contexts:
+        result = model.lookup(ctx)
+        print(f"\nContext: {ctx}")
+        if result:
+            top = sorted(result.items(), key=lambda x: x[1], reverse=True)[:5]
+            print("Top predictions:", top)
+        else:
+            print("No predictions found.")
+
+    print("NGramModel test completed successfully.")
+
+    
+   # -------------------------------
+    # Save model & vocab
+    # -------------------------------
+    print("\n[3] Saving model and vocabulary...")
+    model.save_model(os.getenv("MODEL_P"))
+    model.save_vocab(os.getenv("VOCAB"))
+
+
+
+# ---------------------------------------------------------
+# Enable standalone execution
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    main()
