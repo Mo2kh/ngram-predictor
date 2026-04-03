@@ -218,3 +218,89 @@ class Normalizer:
         with open(filepath, "w", encoding="utf-8") as f:
             for tokens in sentences:
                 f.write(" ".join(tokens) + "\n")
+
+
+
+
+def main():
+    """
+    Standalone test runner for Normalizer using environment variables.
+
+    This function:
+    - Loads config from config/.env
+    - Loads and cleans raw Gutenberg text
+    - Sentence-tokenizes BEFORE normalization
+    - Normalizes each sentence using normalize()
+    - Word-tokenizes and saves train_tokens.txt
+
+    Run from project root:
+        python src/data_prep/normalizer.py
+    """
+
+    import os
+    from dotenv import load_dotenv
+
+    # -------------------------------------------------
+    # Load environment variables
+    # -------------------------------------------------
+    load_dotenv(dotenv_path=os.path.join(os.getcwd(), "config/.env"))
+
+    TRAIN_RAW_DIR = os.getenv("TRAIN_RAW_DIR")
+    TRAIN_TOKEN_FILE = os.getenv("TRAIN_TOKENS")
+
+    if not TRAIN_RAW_DIR or not TRAIN_TOKEN_FILE:
+        raise RuntimeError("Missing TRAIN_RAW_DIR or TRAIN_TOKENS in .env")
+
+    print("=== Normalizer Standalone Test ===")
+
+    normalizer = Normalizer()
+
+    # -------------------------------------------------
+    # 1. Load raw text (Gutenberg stripped per file)
+    # -------------------------------------------------
+    print("\n[1] Loading raw text...")
+    raw_text = normalizer.load(TRAIN_RAW_DIR)
+    print(f"Loaded {len(raw_text)} characters")
+
+    # -------------------------------------------------
+    # 2. Sentence tokenize FIRST (punctuation required)
+    # -------------------------------------------------
+    print("\n[2] Sentence tokenization...")
+    sentences = normalizer.sentence_tokenize(raw_text)
+    print(f"Extracted {len(sentences)} sentences")
+
+    print("\nSample raw sentences:")
+    for s in sentences[:5]:
+        print("•", s)
+
+    # -------------------------------------------------
+    # 3. Normalize each sentence using normalize()
+    # -------------------------------------------------
+    print("\n[3] Normalizing sentences...")
+    tokenized_sentences = []
+
+    for s in sentences:
+        normalized = normalizer.normalize(s)
+        tokens = normalizer.word_tokenize(normalized)
+        if tokens:
+            tokenized_sentences.append(tokens)
+
+    print("\nSample tokenized sentences:")
+    for t in tokenized_sentences[:5]:
+        print(t)
+
+    # -------------------------------------------------
+    # 4. Save output
+    # -------------------------------------------------
+    print("\n[4] Saving tokenized corpus...")
+    normalizer.save(tokenized_sentences, TRAIN_TOKEN_FILE)
+
+    print(f"✅ train_tokens.txt saved to {TRAIN_TOKEN_FILE}")
+    print("\n✅ Normalizer test completed successfully.")
+
+
+# ---------------------------------------------------------
+# Enable standalone execution
+# ---------------------------------------------------------
+if __name__ == "__main__":
+    main()
