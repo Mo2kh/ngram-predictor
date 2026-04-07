@@ -120,11 +120,26 @@ def inference():
 
 
 
+
+# ---------------------------------------------------------
+# Module 4 — ALL STEPS (dataprep → model → inference)
+# ---------------------------------------------------------
+def all_steps():
+    """
+    Run the full pipeline:
+    dataprep → model → inference
+    """
+    dataprep()
+    model()
+    inference()
+
+
+
 # ---------------------------------------------------------
 # CLI Entry Point
 # ---------------------------------------------------------
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--step", required=True)
     args = parser.parse_args()
@@ -135,5 +150,8 @@ if __name__ == "__main__":
         model()
     elif args.step == "inference":
         inference()
+    elif args.step == "all":
+        all_steps()
     else:
-        print("Usage: python main.py --step {dataprep|model|inference}")
+        print("Usage: python main.py --step {dataprep|model|inference|all}")
+
