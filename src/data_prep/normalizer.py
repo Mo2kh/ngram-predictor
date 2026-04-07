@@ -18,7 +18,8 @@ consistent preprocessing across the entire project.
 import os
 import re
 import string
-
+import nltk
+from nltk.tokenize import sent_tokenize
 
 class Normalizer:
     """
@@ -183,8 +184,9 @@ class Normalizer:
             list[str]: List of sentence strings.
         """
        
-        sentences = re.split(r"[.!?]+\s", text)
-        return [s.strip() for s in sentences if s.strip()]
+        #sentences = re.split(r"[.!?]+\s", text)
+        #return [s.strip() for s in sentences if s.strip()]
+        return sent_tokenize(text)
 
 
     def word_tokenize(self,sentence):

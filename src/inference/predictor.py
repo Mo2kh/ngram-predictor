@@ -40,7 +40,16 @@ class Predictor:
         Returns:
             None
         """
-        pass
+
+        self.model = model
+        self.normalizer = normalizer
+
+        # Load environment configuration
+        load_dotenv(dotenv_path=os.path.join(os.getcwd(), "config/.env"))
+
+        self.ngram_order = int(os.getenv("NGRAM_ORDER"))
+        self.top_k = int(os.getenv("TOP_K"))
+
 
     # ----------------------------------------------------------
     # Step 01 — Normalize input & extract context
@@ -56,7 +65,16 @@ class Predictor:
         Returns:
             list[str]: The extracted context tokens.
         """
-        pass
+
+        normalized = self.normalizer.normalize(text)
+        tokens = normalized.split()
+
+        context_size = self.ngram_order - 1
+        if context_size <= 0:
+            return []
+
+        return tokens[-context_size:]
+
 
     # ----------------------------------------------------------
     # Step 02 — Map OOV words to <UNK>
@@ -71,7 +89,12 @@ class Predictor:
         Returns:
             list[str]: Context tokens with OOV mapped to <UNK>.
         """
-        pass
+
+        return [
+            token if token in self.model.vocab_set else "<UNK>"
+            for token in context
+        ]
+
 
     # ----------------------------------------------------------
     # Step 03 & 04 — Predict next words
@@ -87,4 +110,86 @@ class Predictor:
         Returns:
             list[str]: Top-k predicted next words sorted by probability.
         """
-        pass
+
+        if k is None:
+            k = self.top_k
+
+        # 1. Normalize input & extract context
+        context = self.normalize(text)
+
+        # 2. Map OOV tokens
+        context = self.map_oov(context)
+
+        # 3. Backoff lookup (handled by the model)
+        candidates = self.model.lookup(context)
+
+        if not candidates:
+            return []
+
+        # 4. Rank candidates by probability (descending)
+        ranked = sorted(candidates.items(), key=lambda x: x[1], reverse=True)
+
+        return [word for word, _ in ranked[:k]]
+
+def main():
+    """
+    Standalone test runner for Predictor.
+
+    This function:
+    - Loads config from config/.env
+    - Loads trained model and vocabulary
+    - Instantiates Normalizer and Predictor
+    - Runs an interactive prediction loop
+
+    Run from project root:
+        python src/inference/predictor.py
+    """
+
+ 
+    import os
+    from dotenv import load_dotenv
+    import sys 
+    sys.path.append(os.getcwd())
+    from src.model.ngram_model import NGramModel
+    from src.data_prep.normalizer import Normalizer
+
+    # -------------------------------------------------
+    # Load environment variables
+    # -------------------------------------------------
+    load_dotenv(dotenv_path=os.path.join(os.getcwd(), "config/.env"))
+
+    print("=== Predictor Standalone CLI ===")
+    print("Type text and press Enter. Type 'quit' to exit.\n")
+
+    # -------------------------------------------------
+    # Load model & normalizer
+    # -------------------------------------------------
+    model = NGramModel(
+        ngram_order=int(os.getenv("NGRAM_ORDER")),
+        unk_threshold=int(os.getenv("UNK_THRESHOLD"))
+    )
+    model.load(os.getenv("MODEL_P"), os.getenv("VOCAB"))
+
+    normalizer = Normalizer()
+    predictor = Predictor(model, normalizer)
+
+    # -------------------------------------------------
+    # Interactive loop
+    # -------------------------------------------------
+    try:
+        while True:
+            text = input("> ").strip()
+
+            if text.lower() in {"quit", "exit"}:
+                print("Goodbye.")
+                break
+
+            predictions = predictor.predict_next(text)
+            print("Predictions:", predictions)
+
+    except KeyboardInterrupt:
+        print("\nGoodbye.")
+
+
+if __name__ == "__main__":
+    main()

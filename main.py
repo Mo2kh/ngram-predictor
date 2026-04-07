@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 from src.data_prep.normalizer import Normalizer
 from src.model.ngram_model import NGramModel
+from src.inference.predictor import Predictor
 
 
 # ---------------------------------------------------------
@@ -86,17 +87,53 @@ def model():
     print(f" vocab.json saved to {vocab_path}")
 
 
+
+# ---------------------------------------------------------
+# Module 3 — Inference (CLI)
+# ---------------------------------------------------------
+def inference():
+    print("=== Starting Inference CLI ===")
+    print("Type text and press Enter. Type 'quit' to exit.\n")
+
+    model = NGramModel(
+        ngram_order=int(os.getenv("NGRAM_ORDER")),
+        unk_threshold=int(os.getenv("UNK_THRESHOLD"))
+    )
+    model.load(os.getenv("MODEL_P"), os.getenv("VOCAB"))
+
+    normalizer = Normalizer()
+    predictor = Predictor(model, normalizer)
+
+    try:
+        while True:
+            text = input("> ").strip()
+
+            if text.lower() in {"quit", "exit"}:
+                print("Goodbye.")
+                break
+
+            predictions = predictor.predict_next(text)
+            print("Predictions:", predictions)
+
+    except KeyboardInterrupt:
+        print("\nGoodbye.")
+
+
+
 # ---------------------------------------------------------
 # CLI Entry Point
 # ---------------------------------------------------------
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser()
-    parser.add_argument("--step")
+    parser.add_argument("--step", required=True)
     args = parser.parse_args()
 
     if args.step == "dataprep":
         dataprep()
     elif args.step == "model":
         model()
+    elif args.step == "inference":
+        inference()
     else:
-        print("Usage: python main.py --step {dataprep|model}")
+        print("Usage: python main.py --step {dataprep|model|inference}")
