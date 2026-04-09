@@ -216,7 +216,11 @@ class Normalizer:
         Returns:
             None
         """
-        
+    
+        directory = os.path.dirname(filepath)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
+    
         with open(filepath, "w", encoding="utf-8") as f:
             for tokens in sentences:
                 f.write(" ".join(tokens) + "\n")

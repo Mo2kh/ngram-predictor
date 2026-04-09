@@ -187,6 +187,10 @@ class NGramModel:
         """
 
         output = {}
+    
+        directory = os.path.dirname(model_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
 
         for order in range(1, self.ngram_order + 1):
             key = f"{order}gram"
@@ -210,6 +214,10 @@ class NGramModel:
         Returns:
             None
         """
+    
+        directory = os.path.dirname(vocab_path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
 
         with open(vocab_path, "w", encoding="utf-8") as f:
             json.dump(self.vocab, f, indent=2)
