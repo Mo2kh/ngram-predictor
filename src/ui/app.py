@@ -39,7 +39,7 @@ class PredictorUI:
             ngram_order=int(os.getenv("NGRAM_ORDER")),
             unk_threshold=int(os.getenv("UNK_THRESHOLD"))
         )
-        self.model.load(os.getenv("MODEL_P"), os.getenv("VOCAB"))
+        self.model.load(os.getenv("MODEL"), os.getenv("VOCAB"))
 
         self.normalizer = Normalizer()
         self.predictor = Predictor(self.model, self.normalizer)

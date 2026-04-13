@@ -51,7 +51,7 @@ Populate it with the following variables:
 ```env
 TRAIN_RAW_DIR=data/raw/train
 TRAIN_TOKENS=data/processed/train_tokens.txt
-MODEL_P=data/model/model.json
+MODEL=data/model/model.json
 VOCAB=data/model/vocab.json
 NGRAM_ORDER=4
 UNK_THRESHOLD=2

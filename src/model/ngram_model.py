@@ -320,7 +320,7 @@ def main():
     # Save model & vocab
     # -------------------------------
     print("\n[3] Saving model and vocabulary...")
-    model.save_model(os.getenv("MODEL_P"))
+    model.save_model(os.getenv("MODEL"))
     model.save_vocab(os.getenv("VOCAB"))
 
 

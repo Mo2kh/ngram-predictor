@@ -70,7 +70,7 @@ def model():
     )
 
     train_tokens = os.getenv("TRAIN_TOKENS")
-    model_path = os.getenv("MODEL_P")
+    model_path = os.getenv("MODEL")
     vocab_path = os.getenv("VOCAB")
 
     # 1. Build vocabulary
@@ -99,7 +99,7 @@ def inference():
         ngram_order=int(os.getenv("NGRAM_ORDER")),
         unk_threshold=int(os.getenv("UNK_THRESHOLD"))
     )
-    model.load(os.getenv("MODEL_P"), os.getenv("VOCAB"))
+    model.load(os.getenv("MODEL"), os.getenv("VOCAB"))
 
     normalizer = Normalizer()
     predictor = Predictor(model, normalizer)
