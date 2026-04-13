@@ -186,7 +186,14 @@ class Normalizer:
        
         #sentences = re.split(r"[.!?]+\s", text)
         #return [s.strip() for s in sentences if s.strip()]
-        return sent_tokenize(text)
+        
+        try:
+            return sent_tokenize(text)
+        except LookupError:
+            nltk.download("punkt")
+            nltk.download("punkt_tab")
+            return sent_tokenize(text)
+
 
 
     def word_tokenize(self,sentence):
